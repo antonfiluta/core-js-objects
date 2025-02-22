@@ -17,8 +17,12 @@
  *    shallowCopy({a: 2, b: { a: [1, 2, 3]}}) => {a: 2, b: { a: [1, 2, 3]}}
  *    shallowCopy({}) => {}
  */
-function shallowCopy(/* obj */) {
-  throw new Error('Not implemented');
+function shallowCopy(obj) {
+  const foo = {};
+  if (obj && typeof obj === 'object') {
+    return Object.assign(foo, obj);
+  }
+  return obj;
 }
 
 /**
@@ -32,8 +36,29 @@ function shallowCopy(/* obj */) {
  *    mergeObjects([{a: 1, b: 2}, {b: 3, c: 5}]) => {a: 1, b: 5, c: 5}
  *    mergeObjects([]) => {}
  */
-function mergeObjects(/* objects */) {
-  throw new Error('Not implemented');
+function mergeObjects(objects) {
+  let lines = [];
+
+  for (let i = 0; i < objects.length; i += 1)
+    lines = lines.concat(Object.entries(objects[i]));
+
+  for (let i = 0; i < lines.length - 1; i += 1) {
+    for (let j = i + 1; j < lines.length; j += 1) {
+      if (lines[i][0] === lines[j][0]) {
+        lines[i][1] += lines[j][1];
+        lines[j] = [];
+      }
+    }
+  }
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const obj = {};
+    const [key, value] = lines[i];
+    if (key) obj[key] = value;
+    lines[i] = obj;
+  }
+
+  return lines[0] ? Object.assign(...lines) : {};
 }
 
 /**
@@ -49,8 +74,13 @@ function mergeObjects(/* objects */) {
  *    removeProperties({name: 'John', age: 30, city: 'New York'}, ['age']) => {name: 'John', city: 'New York'}
  *
  */
-function removeProperties(/* obj, keys */) {
-  throw new Error('Not implemented');
+function removeProperties(obj, keys) {
+  const newObj = obj;
+  for (let i = 0; i < keys.length; i += 1) {
+    if (Object.hasOwn(obj, keys[i])) delete newObj[keys[i]];
+  }
+
+  return newObj;
 }
 
 /**
@@ -65,8 +95,13 @@ function removeProperties(/* obj, keys */) {
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 2}) => true
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 3}) => false
  */
-function compareObjects(/* obj1, obj2 */) {
-  throw new Error('Not implemented');
+function compareObjects(obj1, obj2) {
+  let isEquel = true;
+  for (let i = 0; i < Object.keys(obj1).length; i += 1)
+    if (Object.keys(obj1)[i])
+      if (obj1[Object.keys(obj1)[i]] !== obj2[Object.keys(obj1)[i]])
+        isEquel = false;
+  return isEquel;
 }
 
 /**
@@ -80,8 +115,8 @@ function compareObjects(/* obj1, obj2 */) {
  *    isEmptyObject({}) => true
  *    isEmptyObject({a: 1}) => false
  */
-function isEmptyObject(/* obj */) {
-  throw new Error('Not implemented');
+function isEmptyObject(obj) {
+  return !Object.keys(obj)[0];
 }
 
 /**
@@ -100,8 +135,9 @@ function isEmptyObject(/* obj */) {
  *    immutableObj.newProp = 'new';
  *    console.log(immutableObj) => {a: 1, b: 2}
  */
-function makeImmutable(/* obj */) {
-  throw new Error('Not implemented');
+function makeImmutable(obj) {
+  Object.freeze(obj);
+  return obj;
 }
 
 /**
